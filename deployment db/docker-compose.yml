@@ -1,5 +1,5 @@
 services:
-  postgres:
+  postgres-codeAdvisors:
     container_name: "codeAdvisors-postgres"
     image: "debezium/postgres:16-alpine"
     ports:
@@ -7,7 +7,7 @@ services:
     volumes:
       - "./config/postgres/postgresql.conf:/usr/share/postgresql/postgresql.conf"
       - "./config/postgres/postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql"
-      - "postgres:/var/lib/postgresql/data"
+      - "postgres-codeAdvisors:/var/lib/postgresql/data"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=Code@Advisors2024
@@ -20,13 +20,13 @@ services:
     networks:
       - codeAdvisors-network
 
-  postgres-oauth2:
-    container_name: "codeAdvisors-postgres-oauth2"
+  postgres-codeAdvisors-oauth2:
+    container_name: "postgres-codeAdvisors-oauth2"
     image: "debezium/postgres:16-alpine"
     ports:
       - "5402:5432"
     volumes:
-      - "postgres-oauth2:/var/lib/postgresql/data"
+      - "postgres-codeAdvisors-oauth2:/var/lib/postgresql/data"
     environment:
       - POSTGRES_USER=oauth2
       - POSTGRES_PASSWORD=Code@Advisors2024
@@ -60,20 +60,20 @@ services:
     networks:
       - codeAdvisors-network
 
-  pgadmin:
-    container_name: "codeAdvisors-pgadmin"
-    image: "dpage/pgadmin4:latest"
-    ports:
-      - "5432:80" # pgAdmin accessible on port 5050
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@codeadvisors.com
-      - PGADMIN_DEFAULT_PASSWORD=Code@Advisors2024
-    depends_on:
-      - postgres
-      - postgres-oauth2
-    networks:
-      - codeAdvisors-network
-    restart: always
+  # pgadmin:
+  #   container_name: "codeAdvisors-pgadmin"
+  #   image: "dpage/pgadmin4:latest"
+  #   ports:
+  #     - "5432:80" # pgAdmin accessible on port 5050
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=admin@codeadvisors.com
+  #     - PGADMIN_DEFAULT_PASSWORD=Code@Advisors2024
+  #   depends_on:
+  #     - postgres
+  #     - postgres-codeAdvisors-oauth2
+  #   networks:
+  #     - codeAdvisors-network
+  #   restart: always
 
 networks:
   codeAdvisors-network:
@@ -81,7 +81,7 @@ networks:
     name: codeAdvisors-network
 
 volumes:
-  postgres:
-  postgres-oauth2:
+  postgres-codeAdvisors:
+  postgres-codeAdvisors-oauth2:
   mongodb-codeAdvisors-vol:
   mongodb-codeAdvisors-log-vol:
