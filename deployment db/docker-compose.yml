@@ -1,0 +1,87 @@
+services:
+  postgres:
+    container_name: "codeAdvisors-postgres"
+    image: "debezium/postgres:16-alpine"
+    ports:
+      - "5401:5432"
+    volumes:
+      - "./config/postgres/postgresql.conf:/usr/share/postgresql/postgresql.conf"
+      - "./config/postgres/postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql"
+      - "postgres:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=Code@Advisors2024
+      - TZ=Asia/Bangkork
+    healthcheck:
+     test: [ "CMD", "pg_isready", "-U", "admin", "-d", "admin" ]
+     interval: 20s
+     timeout: 3s
+     retries: 5
+    networks:
+      - codeAdvisors-network
+
+  postgres-oauth2:
+    container_name: "codeAdvisors-postgres-oauth2"
+    image: "debezium/postgres:16-alpine"
+    ports:
+      - "5402:5432"
+    volumes:
+      - "postgres-oauth2:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=oauth2
+      - POSTGRES_PASSWORD=Code@Advisors2024
+      - POSTGRES_DB=oauth2
+      - TZ=Asia/Bangkork
+    healthcheck:
+     test: [ "CMD", "pg_isready", "-U", "oauth2", "-d", "oauth2" ]
+     interval: 20s
+     timeout: 3s
+     retries: 5
+    networks:
+      - codeAdvisors-network
+
+  mongodb:
+    image: "mongo:7.0.12-rc1-jammy"
+    container_name: "codeAdvisors-mongodb"
+    ports:
+      - "5403:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=Code@Advisors2024
+    healthcheck:
+      test: echo 'mongosh --authenticationDatabase admin --host localhost -u admin -p admin2024 admin --quiet | grep -q 1'
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    volumes:
+      - mongodb-codeAdvisors-vol:/data/db/
+      - mongodb-codeAdvisors-log-vol:/var/log/mongodb/
+    networks:
+      - codeAdvisors-network
+
+  pgadmin:
+    container_name: "codeAdvisors-pgadmin"
+    image: "dpage/pgadmin4:latest"
+    ports:
+      - "5432:80" # pgAdmin accessible on port 5050
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@codeadvisors.com
+      - PGADMIN_DEFAULT_PASSWORD=Code@Advisors2024
+    depends_on:
+      - postgres
+      - postgres-oauth2
+    networks:
+      - codeAdvisors-network
+    restart: always
+
+networks:
+  codeAdvisors-network:
+    driver: bridge
+    name: codeAdvisors-network
+
+volumes:
+  postgres:
+  postgres-oauth2:
+  mongodb-codeAdvisors-vol:
+  mongodb-codeAdvisors-log-vol:
