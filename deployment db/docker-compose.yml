@@ -39,9 +39,9 @@ services:
      retries: 5
     networks:
       - codeAdvisors-network
-
+    
   mongodb:
-    image: "mongo:7.0.12-rc1-jammy"
+    image: "debezium/example-mongodb:latest"
     container_name: "codeAdvisors-mongodb"
     ports:
       - "5403:27017"
@@ -59,6 +59,27 @@ services:
       - mongodb-codeAdvisors-log-vol:/var/log/mongodb/
     networks:
       - codeAdvisors-network
+
+
+  # mongodb:
+  #   image: "mongo:7.0.12-rc1-jammy"
+  #   container_name: "codeAdvisors-mongodb"
+  #   ports:
+  #     - "5403:27017"
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=admin
+  #     - MONGO_INITDB_ROOT_PASSWORD=Code@Advisors2024
+  #   healthcheck:
+  #     test: echo 'mongosh --authenticationDatabase admin --host localhost -u admin -p admin2024 admin --quiet | grep -q 1'
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 20s
+  #   volumes:
+  #     - mongodb-codeAdvisors-vol:/data/db/
+  #     - mongodb-codeAdvisors-log-vol:/var/log/mongodb/
+  #   networks:
+  #     - codeAdvisors-network
 
   # pgadmin:
   #   container_name: "codeAdvisors-pgadmin"
