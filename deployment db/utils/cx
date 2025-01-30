@@ -6,4 +6,4 @@ if [ $# -eq 0 ]
     exit 1
 fi
 
-curl -X POST -H "Content-Type: application/json" -d @$1 http://167.172.78.79:8083/connectors -w "\n" | jq .
+curl -X POST -H "Content-Type: application/json" -d @$1 http://202.178.125.77:8083/connectors -w "\n" | jq .

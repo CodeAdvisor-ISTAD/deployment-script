@@ -6,4 +6,4 @@ if [ $# -eq 0 ]
     exit 1
 fi
 
-curl -X DELETE 167.172.78.79:8083/connectors/$1
+curl -X DELETE 202.178.125.77:8083/connectors/$1
